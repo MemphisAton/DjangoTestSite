@@ -1,5 +1,4 @@
 from django.db import models
-from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 
@@ -23,16 +22,32 @@ class Women(models.Model):
         DRAFT = 0, 'Черновик'
         PUBLISHED = 1, 'Опубликовано'
 
-    title = models.CharField(max_length=255, verbose_name='заголовок')
-    slug = models.SlugField(max_length=255, unique=True, db_index=True)
+    title = models.CharField(max_length=255,
+                             verbose_name='заголовок')
+    slug = models.SlugField(max_length=255,
+                            unique=True,
+                            db_index=True)
+    photo = models.ImageField(upload_to="photos/%Y/%m/%d/",
+                              default=None,
+                              blank=True,
+                              null=True,
+                              verbose_name="Фото")
     content = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
-                                       default=Status.DRAFT)  # костыль для преобразования 0,1 в значения Bool, для вывода в таблицу админки
-    cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts')
-    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
-    husband = models.OneToOneField('Husband', on_delete=models.SET_NULL, blank=True, null=True, related_name='woman')
+                                       # костыль для преобразования 0,1 в значения Bool, для вывода в таблицу админки
+                                       default=Status.DRAFT)
+    cat = models.ForeignKey('Category',
+                            on_delete=models.PROTECT,
+                            related_name='posts')
+    tags = models.ManyToManyField('TagPost',
+                                  blank=True,
+                                  related_name='tags')
+    husband = models.OneToOneField('Husband',
+                                   on_delete=models.SET_NULL,
+                                   blank=True, null=True,
+                                   related_name='woman')
     objects = models.Manager()
     published = PublishedManager()
 
@@ -87,6 +102,7 @@ class Husband(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class UploadFiles(models.Model):
     file = models.FileField(upload_to='uploads_model')

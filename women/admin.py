@@ -1,4 +1,5 @@
 from django.contrib import admin, messages
+from django.utils.safestring import mark_safe
 
 from .models import Women, Category
 
@@ -14,30 +15,34 @@ class MarriedFilter(admin.SimpleListFilter):  # дополнительный п�
     def queryset(self, request, queryset):
         if self.value() == 'married':
             return queryset.filter(husband__isnull=False)
-        return queryset.filter(husband__isnull=True)
+        elif self.value() == 'single':
+            return queryset.filter(husband__isnull=True)
 
 
 @admin.register(Women)
 class WomenAdmin(admin.ModelAdmin):
-    # fields = ['title', 'content']         # поля отображающиеся в админке при изменении записи
+    fields = ['title', 'slug', 'content', 'post_photo', 'photo', 'cat', 'husband',
+              'tags', ]  # поля отображающиеся в админке при изменении записи
     # exclude = ['title', 'content']        # поля исключающиеся в админке при изменении записи
-    # readonly_fields = ['slug']# поля для отображения но не редактирования
-    list_display = ('title', 'time_create', 'is_published', 'cat', 'brief_info')  # отображение таблицы в админке
+    readonly_fields = ['post_photo']  # поля для отображения но не редактирования
+    list_display = ('post_photo', 'title', 'time_create', 'is_published', 'cat')  # отображение таблицы в админке
     list_display_links = ('title',)  # переход на обьект БД
-    ordering = ('time_create', '-title')  # сортировка
+    ordering = ('-time_create',)  # сортировка
     list_editable = ('is_published',)  # поля редактируемые в списке
     filter_horizontal = ('tags',)  # отображение списка
     prepopulated_fields = {'slug': ('title',)}  # поле надо обязательно сделать редактируемым
-    list_per_page = 7  # максимальное количество отображения строк в таблице
+    list_per_page = 50  # максимальное количество отображения строк в таблице
     actions = ('set_published', 'set_draft',)  # добавляем действие над таблицей
     search_fields = ('title',
                      'cat__name',)  # добавляем строку поиска по таблице, через __ можно писать lookupы и категории, title__startswith(например)
     list_filter = (MarriedFilter, 'cat', 'is_published',)  # фильтрация по выбранным категориям
+    save_on_top = True  # кнопки редактирования и снизу и сверху
 
-    @admin.display(description='Краткое описание',
-                   ordering='content')  # описание и возможность сортировке как другое поле
-    def brief_info(self, women: Women):
-        return f'Описание {len(women.content)} символов'
+    @admin.display(description="Изображение")
+    def post_photo(self, women: Women):
+        if women.photo:
+            return mark_safe(f"<img src='{women.photo.url}' width=30>")
+        return "Без фото"
 
     @admin.action(description='Опубликовать выбранное')
     def set_published(self, request, queryset):  # создаем действие над таблицей
