@@ -1,16 +1,20 @@
 from django import template
 from django.db.models import Count, Q
 
-import women.views as views
-
 from women.models import Category, TagPost
+from women.utils import menu
 
 register = template.Library()
 
 
+@register.simple_tag
+def get_menu():
+    return menu
+
+
 @register.inclusion_tag('women/list_categories.html')
 def show_categories(cat_selected=0):
-    #cats = Category.objects.annotate(total=Count('posts')).filter(total__gt=0)
+    # cats = Category.objects.annotate(total=Count('posts')).filter(total__gt=0)
     cats = Category.objects.annotate(total_posts=Count('posts', filter=Q(posts__is_published=True))).filter(
         total_posts__gt=0)
 
