@@ -97,7 +97,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
+        'OPTIONS': {
+            'min_length': 2,
+        }},
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
@@ -138,3 +140,9 @@ MEDIA_URL = '/media/'
 # LOGOUT_REDIRECT_URL – задает URL-адрес, на который перенаправляется пользователь после выхода.
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'users:login'
+LOGIN_URL = 'users:login'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # стандартный бэк который делает авторизацию по юзернаме и пасу
+    'users.authentication.EmailAuthBackend',  # написанный бэк который делает авторизацию по емаилу
+]

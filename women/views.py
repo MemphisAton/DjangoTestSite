@@ -1,11 +1,13 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from women.forms import AddPostForm, UploadFileForm
-from .models import Women, TagPost, UploadFiles
+from women.forms import AddPostForm
+from .models import Women, TagPost
 from .utils import DataMixin
 
 
@@ -51,13 +53,13 @@ class WomenHome(DataMixin, ListView):
 #     with open(f"uploads/{f.name}", "wb+") as destination:
 #         for chunk in f.chunks():
 #             destination.write(chunk)
-
+@login_required  # доступ только для авторизованных ()-можно тут прописать куда перенаправлять login_url = , или в сеттингс
 def about(request):
-    contact_list = Women.published.all() #какие элементы используем
-    paginator = Paginator(contact_list, 3) #класс пагинатора (список , количество для разбивки)
+    contact_list = Women.published.all()  # какие элементы используем
+    paginator = Paginator(contact_list, 3)  # класс пагинатора (список , количество для разбивки)
 
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number) #получаем текущую страницу
+    page_obj = paginator.get_page(page_number)  # получаем текущую страницу
     return render(request, 'women/about.html', {'page_obj': page_obj, 'title': 'О сайте'})
 
 
@@ -115,13 +117,20 @@ class ShowPost(DataMixin, DetailView):
 #         return render(request, 'women/addpage.html', {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
-class AddPage(DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     # model = Women
-    # fields = ['title', 'slug', 'content', 'is_published', 'cat'] # '__all__' отображение всех полейб название из модели
+    # fields = ['title', 'slug', 'content'] # '__all__' отображение всех полей название из модели
     template_name = 'women/addpage.html'
-    # success_url = reverse_lazy('home')  # возвразает маршрут главной страницы, если без то перенаправление берется из метода get_absolute_url
+    # success_url = reverse_lazy('home')  # возвразает маршрут главной страницы,
+    # если без то перенаправление берется из метода get_absolute_url
     title_page = 'Добавление статьи'
+
+    # login_url = 'users:login' #куда послать если нет авторизации
+    def form_valid(self, form):
+        w = form.save(commit=False)
+        w.author = self.request.user
+        return super().form_valid(form)
 
 
 class UpdatePage(DataMixin, UpdateView):
