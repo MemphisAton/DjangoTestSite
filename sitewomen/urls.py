@@ -19,7 +19,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 from sitewomen import settings
-from women import views
 from women.views import page_not_found
 
 urlpatterns = [
@@ -27,6 +26,8 @@ urlpatterns = [
     path('', include('women.urls')),
     path('__debug__/', include('debug_toolbar.urls')),
     path('users/', include('users.urls', namespace='users')),
+    path('social-auth/', include('social_django.urls', namespace='social')),  # для авторизации через соц сети
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -37,5 +38,3 @@ admin.site.site_header = "Администрирование имени меня
 admin.site.index_title = 'Админка'
 admin.site.site_title = 'sitewomen'
 admin.site.site_url = "/"  # 'открыть сайт' перенавравление в админке
-
-

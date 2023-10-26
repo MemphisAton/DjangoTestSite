@@ -10,8 +10,9 @@
     <p><label class="form-label" for="{{ f.id_for_label }}">{{f.label}}: </label>{{ f }}</p>
     <div class="form-error">{{ f.errors }}</div>
     {% endfor %}
-    <p>
-        <button type="submit">Войти</button>
-    </p>
+    <p><button type="submit">Войти</button></p>
+    <p><a href="{% url 'users:password_reset' %}">Забыли пароль?</a></p>
 </form>
+<hr>
+<p><a href="{% url 'social:begin' 'github' %}"><img src="/media/social-auth/github.png"></a></p>
 {% endblock %}

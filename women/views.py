@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
@@ -117,7 +117,7 @@ class ShowPost(DataMixin, DetailView):
 #         return render(request, 'women/addpage.html', {'menu': menu, 'title': 'Добавление статьи', 'form': form})
 
 
-class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+class AddPage(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     # model = Women
     # fields = ['title', 'slug', 'content'] # '__all__' отображение всех полей название из модели
@@ -125,6 +125,10 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     # success_url = reverse_lazy('home')  # возвразает маршрут главной страницы,
     # если без то перенаправление берется из метода get_absolute_url
     title_page = 'Добавление статьи'
+    permission_required = 'women.add_women'
+
+    # разрешение которым должен обладать пользователь для доступа к странице
+    # (имя приложения.add_имя таблицы с которым связано разрешение)(<приложение>.<действие>_<таблица>)
 
     # login_url = 'users:login' #куда послать если нет авторизации
     def form_valid(self, form):
@@ -133,7 +137,7 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
-class UpdatePage(DataMixin, UpdateView):
+class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     model = Women
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'women/addpage.html'
@@ -143,6 +147,9 @@ class UpdatePage(DataMixin, UpdateView):
     #     'menu': menu,
     #     'title': 'Редактирование статьи',
     # }
+    permission_required = 'women.change_women'
+    # разрешение которым должен обладать пользователь для доступа к странице
+    # (имя приложения.add_имя таблицы с которым связано разрешение)(<приложение>.<действие>_<таблица>)
 
 
 class DeletePage(DeleteView):
@@ -151,6 +158,7 @@ class DeletePage(DeleteView):
     success_url = reverse_lazy('home')
 
 
+@permission_required(perm='women.view_women', raise_exception=True)  # декоратор на разрешение функции
 def contact(request):
     return HttpResponse("Обратная связь")
 
