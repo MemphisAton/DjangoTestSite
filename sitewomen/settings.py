@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from config import load_config, Config
+config: Config = load_config('.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -167,12 +169,12 @@ AUTH_USER_MODEL = 'users.User'
 DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.png'
 
 # ключи с гитхаб:Settings/Developer Settings ->  OAuth apps
-SOCIAL_AUTH_GITHUB_KEY = '9b49b23eec820632002a'
-SOCIAL_AUTH_GITHUB_SECRET = 'ec7256609672da3eb349e48a78bed7b75424d3bc'
+SOCIAL_AUTH_GITHUB_KEY = config.db.SOCIAL_AUTH_GITHUB_KEY
+SOCIAL_AUTH_GITHUB_SECRET = config.db.SOCIAL_AUTH_GITHUB_SECRET
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = '51779732' #id приложения https://dev.vk.com
-SOCIAL_AUTH_VK_OAUTH2_SECRET = 'oVbsu1hmy1sgW8AlXVeI'
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+SOCIAL_AUTH_VK_OAUTH2_KEY = config.db.SOCIAL_AUTH_VK_OAUTH2_KEY #id приложения https://dev.vk.com
+SOCIAL_AUTH_VK_OAUTH2_SECRET = config.db.SOCIAL_AUTH_VK_OAUTH2_SECRET
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = [config.db.SOCIAL_AUTH_VK_OAUTH2_SCOPE]
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
