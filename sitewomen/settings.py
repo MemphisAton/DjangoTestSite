@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-ywt^i-jce1cq%5q4s^p0130-h9x9vdmvmge-vf8g+htkga+=71
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'sitewomen.ru']
 INTERNAL_IPS = ['127.0.0.1']
 
 # Application definition
@@ -144,6 +144,7 @@ LOGOUT_REDIRECT_URL = 'users:login'
 LOGIN_URL = 'users:login'
 
 AUTHENTICATION_BACKENDS = [
+    'social_core.backends.vk.VKOAuth2', # авторизация через ВК
     'social_core.backends.github.GithubOAuth2',  # авторизация через гитхаб
     'django.contrib.auth.backends.ModelBackend',  # стандартный бэк который делает авторизацию по юзернаме и пасу
     'users.authentication.EmailAuthBackend',  # написанный бэк который делает авторизацию по емаилу
@@ -169,6 +170,10 @@ DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.png'
 SOCIAL_AUTH_GITHUB_KEY = '9b49b23eec820632002a'
 SOCIAL_AUTH_GITHUB_SECRET = 'ec7256609672da3eb349e48a78bed7b75424d3bc'
 
+SOCIAL_AUTH_VK_OAUTH2_KEY = '51779732' #id приложения https://dev.vk.com
+SOCIAL_AUTH_VK_OAUTH2_SECRET = 'oVbsu1hmy1sgW8AlXVeI'
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',
     'social_core.pipeline.social_auth.social_uid',
@@ -181,3 +186,4 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
