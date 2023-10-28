@@ -1,12 +1,12 @@
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
 
-from women.forms import AddPostForm
+from women.forms import AddPostForm, ContactForm
 from .models import Women, TagPost
 from .utils import DataMixin
 
@@ -158,11 +158,18 @@ class DeletePage(DeleteView):
     success_url = reverse_lazy('home')
 
 
-@permission_required(perm='women.view_women', raise_exception=True)  # декоратор на разрешение функции
-def contact(request):
-    return HttpResponse("Обратная связь")
+class ContactFormView(LoginRequiredMixin, DataMixin, FormView):
+    form_class = ContactForm  # класс формы
+    template_name = 'women/contact.html'  # используемый шаблон
+    success_url = reverse_lazy('home')  # перенаправление при успешном
+    title_page = "Обратная связь"
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
 
 
+# @permission_required(perm='women.view_women', raise_exception=True)  # декоратор на разрешение функции
 def login(request):
     return HttpResponse("Авторизация")
 

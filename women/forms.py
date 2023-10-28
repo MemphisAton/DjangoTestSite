@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 from django.core.exceptions import ValidationError
 
@@ -56,7 +57,8 @@ class AddPostForm(forms.ModelForm):
 
     class Meta:
         model = Women
-        fields = ['title', 'slug', 'content', 'photo', 'is_published', 'cat', 'husband', 'tags']  # указывать названия из модели
+        fields = ['title', 'slug', 'content', 'photo', 'is_published', 'cat', 'husband',
+                  'tags']  # указывать названия из модели
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-input'}),
             'content': forms.Textarea(attrs={'cols': 50, 'rows': 5}),
@@ -77,4 +79,11 @@ class AddPostForm(forms.ModelForm):
 
 
 class UploadFileForm(forms.Form):
-    file = forms.ImageField(label="Файл") #к ImageField надо установить pillow
+    file = forms.ImageField(label="Файл")  # к ImageField надо установить pillow
+
+
+class ContactForm(forms.Form):
+    name = forms.CharField(label='Имя', max_length=255)
+    email = forms.EmailField(label='Email')
+    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))
+    captcha = CaptchaField()
