@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+
 from config import load_config, Config
 config: Config = load_config('.env')
 
@@ -83,13 +84,23 @@ WSGI_APPLICATION = 'sitewomen.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'sitewomen_db',
+        'USER': 'sitewomen',
+        'PASSWORD': config.db.DATABASE_PASSWORD,
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -146,7 +157,7 @@ LOGOUT_REDIRECT_URL = 'users:login'
 LOGIN_URL = 'users:login'
 
 AUTHENTICATION_BACKENDS = [
-    'social_core.backends.vk.VKOAuth2', # авторизация через ВК
+    'social_core.backends.vk.VKOAuth2',  # авторизация через ВК
     'social_core.backends.github.GithubOAuth2',  # авторизация через гитхаб
     'django.contrib.auth.backends.ModelBackend',  # стандартный бэк который делает авторизацию по юзернаме и пасу
     'users.authentication.EmailAuthBackend',  # написанный бэк который делает авторизацию по емаилу
@@ -168,13 +179,15 @@ AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.png'
 
+
+
 # ключи с гитхаб:Settings/Developer Settings ->  OAuth apps
 SOCIAL_AUTH_GITHUB_KEY = config.db.SOCIAL_AUTH_GITHUB_KEY
 SOCIAL_AUTH_GITHUB_SECRET = config.db.SOCIAL_AUTH_GITHUB_SECRET
 
 SOCIAL_AUTH_VK_OAUTH2_KEY = config.db.SOCIAL_AUTH_VK_OAUTH2_KEY #id приложения https://dev.vk.com
 SOCIAL_AUTH_VK_OAUTH2_SECRET = config.db.SOCIAL_AUTH_VK_OAUTH2_SECRET
-SOCIAL_AUTH_VK_OAUTH2_SCOPE = [config.db.SOCIAL_AUTH_VK_OAUTH2_SCOPE]
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
 SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_details',

@@ -10,7 +10,7 @@ class DatabaseConfig:
     SOCIAL_AUTH_GITHUB_SECRET: str
     SOCIAL_AUTH_VK_OAUTH2_KEY: str
     SOCIAL_AUTH_VK_OAUTH2_SECRET: str
-    SOCIAL_AUTH_VK_OAUTH2_SCOPE: str
+    DATABASE_PASSWORD: str
 
 
 @dataclass
@@ -25,4 +25,4 @@ def load_config(path: Optional[str]) -> Config:
                                     SOCIAL_AUTH_GITHUB_SECRET=env('SOCIAL_AUTH_GITHUB_SECRET'),
                                     SOCIAL_AUTH_VK_OAUTH2_KEY=env('SOCIAL_AUTH_VK_OAUTH2_KEY'),
                                     SOCIAL_AUTH_VK_OAUTH2_SECRET=env('SOCIAL_AUTH_VK_OAUTH2_SECRET'),
-                                    SOCIAL_AUTH_VK_OAUTH2_SCOPE=env('SOCIAL_AUTH_VK_OAUTH2_SCOPE')))
+                                    DATABASE_PASSWORD=env('DATABASE_PASSWORD')))
