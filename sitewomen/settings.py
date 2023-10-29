@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 
 from config import load_config, Config
+
 config: Config = load_config('.env')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -45,18 +46,29 @@ INSTALLED_APPS = [
     'women.apps.WomenConfig',
     'users.apps.UsersConfig',
     'captcha',
+    'django.contrib.sites',  # site map
+    'django.contrib.sitemaps',  # site map
 ]
+SITE_ID = 1  # site map
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    #    "django.middleware.cache.UpdateCacheMiddleware",  # cache all
     'django.middleware.common.CommonMiddleware',
+    #    "django.middleware.cache.FetchFromCacheMiddleware",  # cache all
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
+
+# cache all
+# CACHE_MIDDLEWARE_ALIAS = 'default'
+# CACHE_MIDDLEWARE_SECONDS = 10
+# CACHE_MIDDLEWARE_KEY_PREFIX = 'sitewomen'
+
 
 ROOT_URLCONF = 'sitewomen.urls'
 
@@ -95,6 +107,7 @@ DATABASES = {
         'PORT': 5432,
     }
 }
+
 #
 # DATABASES = {
 #     'default': {
@@ -102,7 +115,13 @@ DATABASES = {
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
-
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache", #отключает кеш, остальное в комменты ставить
+        #"BACKEND": "django.core.cache.backends.redis.RedisCache",
+        #"LOCATION": "redis://127.0.0.1:6379",
+    }
+}
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -180,13 +199,11 @@ AUTH_USER_MODEL = 'users.User'
 
 DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.png'
 
-
-
 # ключи с гитхаб:Settings/Developer Settings ->  OAuth apps
 SOCIAL_AUTH_GITHUB_KEY = config.db.SOCIAL_AUTH_GITHUB_KEY
 SOCIAL_AUTH_GITHUB_SECRET = config.db.SOCIAL_AUTH_GITHUB_SECRET
 
-SOCIAL_AUTH_VK_OAUTH2_KEY = config.db.SOCIAL_AUTH_VK_OAUTH2_KEY #id приложения https://dev.vk.com
+SOCIAL_AUTH_VK_OAUTH2_KEY = config.db.SOCIAL_AUTH_VK_OAUTH2_KEY  # id приложения https://dev.vk.com
 SOCIAL_AUTH_VK_OAUTH2_SECRET = config.db.SOCIAL_AUTH_VK_OAUTH2_SECRET
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
 
@@ -197,9 +214,8 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.social_user',
     'social_core.pipeline.user.get_username',
     'social_core.pipeline.user.create_user',
-    'users.pipeline.new_users_handler', #после создания юзера отрабатывает эта функция
+    'users.pipeline.new_users_handler',  # после создания юзера отрабатывает эта функция
     'social_core.pipeline.social_auth.associate_user',
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
-

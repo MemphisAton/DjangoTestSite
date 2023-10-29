@@ -7,6 +7,7 @@ register_converter(converters.FourDigitYearConverter, "year4")
 
 urlpatterns = [
     path('', views.WomenHome.as_view(), name='home'),
+    # path('', cache_page(30)(views.WomenHome.as_view()), name='home'),  # page cache
     # http://127.0.0.1:8000 через extra_context={} можно передать контекст, но в представлении он затрется
     path('about/', views.about, name='about'),
     path('addpage/', views.AddPage.as_view(), name='add_page'),

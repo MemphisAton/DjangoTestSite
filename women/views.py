@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, FormView
-
+from django.core.cache import cache
 from women.forms import AddPostForm, ContactForm
 from .models import Women, TagPost
 from .utils import DataMixin
@@ -29,8 +29,14 @@ class WomenHome(DataMixin, ListView):
     context_object_name = 'posts'
     title_page = 'Главная страница'
 
-    def get_queryset(self):  # что будет отображаться в качестве списка
-        return Women.published.all().select_related('cat')
+    # def get_queryset(self):  # что будет отображаться в качестве списка
+    #     return Women.published.all().select_related('cat')
+    def get_queryset(self):  # тож самое но с кешем
+        w_lst = cache.get('women_posts')
+        if not w_lst:
+            w_lst = Women.published.all().select_related('cat')
+            cache.set('women_posts', w_lst, 10)
+        return w_lst
 
     # template_name = 'women/index.html'
     # extra_context = {
