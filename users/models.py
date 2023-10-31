@@ -3,7 +3,7 @@ from django.db import models
 
 
 # Create your models here.
-class User(AbstractUser):
+class User(AbstractUser): #расширение модели, потом надо подклбчить в админ.py
     photo = models.ImageField(upload_to="users/%Y/%m/%d/",
                               blank=True,
                               null=True,

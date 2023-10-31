@@ -117,9 +117,9 @@ DATABASES = {
 # }
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache", #отключает кеш, остальное в комменты ставить
-        #"BACKEND": "django.core.cache.backends.redis.RedisCache",
-        #"LOCATION": "redis://127.0.0.1:6379",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",  # отключает кеш, остальное в комменты ставить
+        # "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        # "LOCATION": "redis://127.0.0.1:6379",
     }
 }
 # Password validation
@@ -195,7 +195,9 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User'  # переопределена для расширения модели User
+# теперь нах миграции и базу данный... да так себе способ
+# далее обращение к модели только через get_user_model()
 
 DEFAULT_USER_IMAGE = MEDIA_URL + 'users/default.png'
 

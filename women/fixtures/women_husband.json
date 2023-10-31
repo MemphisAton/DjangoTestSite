@@ -1,0 +1,1 @@
+[{"model": "women.husband", "pk": 1, "fields": {"name": "Брэд Питт", "age": 30}}, {"model": "women.husband", "pk": 2, "fields": {"name": "Том Акерли", "age": 31}}, {"model": "women.husband", "pk": 3, "fields": {"name": "Дэниэл Модер", "age": 25}}, {"model": "women.husband", "pk": 4, "fields": {"name": "Кук Марони", "age": 40}}]
